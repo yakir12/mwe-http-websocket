@@ -1,4 +1,4 @@
-This sterss-tests http and websocket endpoints in `HTTP.jl`.
+This stess-tests http and websocket endpoints in `HTTP.jl`.
 Run the following here:
 ```
 julia --project=. server.jl & julia --project=. client.jl
