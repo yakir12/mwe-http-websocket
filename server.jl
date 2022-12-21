@@ -10,9 +10,14 @@ function websocket_handler(stream)
     return WebSockets.upgrade(ws -> websocket_handler(request, ws), stream)
 end
 
+function fun(bytes)
+    @info "I'm running on thread #$(Threads.threadid())"
+    return reverse(bytes)
+end
+
 function websocket_handler(request, websocket)
     for bytes in websocket
-        tsk = Threads.@spawn reverse(bytes)
+        tsk = Threads.@spawn fun(bytes)
         WebSockets.send(websocket, fetch(tsk))
     end
 end
