@@ -20,7 +20,11 @@ function requests()
     websocket_request()
 end
 
-@showprogress for i in 1:1000
+@info "running client with $(Threads.nthreads()) threads"
+n = 1000
+p = Progress(n)
+Threads.@threads for i in 1:n
     requests()
+    next!(p)
 end
 

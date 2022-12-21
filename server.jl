@@ -11,11 +11,10 @@ function websocket_handler(stream)
 end
 
 function websocket_handler(request, websocket)
-    while !WebSockets.isclosed(websocket)
-        bytes = WebSockets.receive(websocket)
-        WebSockets.send(websocket, reverse(bytes))
+    for bytes in websocket
+        tsk = Threads.@spawn reverse(bytes)
+        WebSockets.send(websocket, fetch(tsk))
     end
-    return 
 end
 
 const ROUTER = HTTP.Router()
@@ -23,5 +22,7 @@ HTTP.register!(ROUTER, "/http", HTTP.streamhandler(http_handler))
 HTTP.register!(ROUTER, "/websocket", websocket_handler)
 
 server = HTTP.serve!(ROUTER; stream=true)
+
+@info "running server with $(Threads.nthreads()) threads"
 
 wait(server)
