@@ -1,4 +1,4 @@
-using HTTP, JSON3
+using HTTP, JSON3, ThreadPools
 
 header = ["Content-Type" => "text/json"]
 body = JSON3.write(rand())
@@ -17,7 +17,10 @@ end
 
 function websocket_handler(request, websocket)
     for bytes in websocket
-        tsk = Threads.@spawn fun(bytes)
+        # tsk = Threads.@spawn fun(bytes)
+        tsk = spawnbg() do
+            fun(bytes)
+        end
         WebSockets.send(websocket, fetch(tsk))
     end
 end
